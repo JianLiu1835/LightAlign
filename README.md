@@ -23,10 +23,10 @@ LightAlign/src/preprocess_fasta.cpp \
 -lstdc++fs  
 ```
 ## Tutorial
-LightAlign Basic Usage:  
-LightAlign.exe -O [Output path for results and intermediate files] -i [Input file path, FASTA/FASTQ]
+### LightAlign Basic Usage:  
+```LightAlign.exe -O [Output path for results and intermediate files] -i [Input file path, FASTA/FASTQ]```
 
-LightAlign Detailed Usage:  
+### LightAlign Detailed Usage:  
 -h Show help documentation  
 -p Required when processing FASTA files containing internal line breaks within sequences  
 -O Output file path  
