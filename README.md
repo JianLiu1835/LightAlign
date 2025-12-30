@@ -6,20 +6,21 @@ LightAlign is a memory-efficient alignment tool for HiFi data that innovatively 
 To use LightAlign, download all the source code to your computer, place it in the same project, compile it, and generate the executable (.exe) file to start using the tool; or you can also download LightAlign.exe to your computer.
 ### Linux system:
 GCC/12.2.0  
-```g++ -std=c++17 \   
-    -isystem /public/home/software/opt/bio/software/GCC/12.2.0/include/c++/12.2.0 \  
-    -ILightAlign/include \  
-    LightAlign/src/help.cpp \  
-    LightAlign/src/step4_5.cpp \  
-    LightAlign/src/step3.cpp \  
-    LightAlign/src/step2.cpp \  
-    LightAlign/src/step1.cpp \  
-    LightAlign/src/functions.cpp \  
-    LightAlign/src/MurmurHash3.cpp \  
-    LightAlign/src/preprocess_fasta.cpp \  
-    -o LightAlign_executable \  
-    -pthread \  
-    -lstdc++fs  
+```
+g++ -std=c++17 \  
+-isystem /public/home/software/opt/bio/software/GCC/12.2.0/include/c++/12.2.0 \  
+-ILightAlign/include \  
+LightAlign/src/help.cpp \  
+LightAlign/src/step4_5.cpp \  
+LightAlign/src/step3.cpp \  
+LightAlign/src/step2.cpp \  
+LightAlign/src/step1.cpp \  
+LightAlign/src/functions.cpp \  
+LightAlign/src/MurmurHash3.cpp \  
+LightAlign/src/preprocess_fasta.cpp \  
+-o LightAlign_executable \  
+-pthread \  
+-lstdc++fs  
 ```
 ## Tutorial
 LightAlign Basic Usage:  
