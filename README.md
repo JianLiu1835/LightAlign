@@ -1,11 +1,11 @@
 # LightAlign
 LightAlign is a memory-efficient alignment tool for HiFi data that innovatively utilizes sequence fuzzy feature and reduces the peak memory usage during overlaps detection. It outputs Pairwise Alignment Format (PAF), when combined with miniasm, LightAlign enables high-quality bacterial genome assembly with memory usage below 1 GB, while also making eukaryotic genome assembly feasible on standard personal computers or even laptops.
-
+LightAlign is fully compliant with the C++17 language standard.  
 ## Installation
 ### windows system:
 To use LightAlign, download all the source code to your computer, place it in the same project, compile it, and generate the executable (.exe) file to start using the tool; or you can also download LightAlign.exe to your computer.
 ### Linux system:
-GCC/12.2.0  
+One Compilation Example Using GCC 12.2.0:  
 ```
 g++ -std=c++17 \  
 -isystem /public/home/software/opt/bio/software/GCC/12.2.0/include/c++/12.2.0 \  
@@ -41,5 +41,7 @@ The executable may be flagged as virus - simply trust/allow the file.
 LightAlign executes in 5 steps. Upon completion, "All steps done." will be displayed. The final output is the PAF file in the output path.
 
 ## Limitations
+Currently, LightAlign is limited to the assembly of HiFi reads.  
 
 ## Contact
+liujian_HZAU@outlook.com
