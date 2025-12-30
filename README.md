@@ -2,9 +2,9 @@
 LightAlign is a memory-efficient alignment tool for HiFi data that innovatively utilizes sequence fuzzy feature and reduces the peak memory usage during overlaps detection.
 
 ## Installation
-windows:
+### windows:
 To use LightAlign, download all the source code to your computer, place it in the same project, compile it, and generate the executable (.exe) file to start using the tool; or you can also download LightAlign.exe to your computer.
-Linux:
+### Linux:
 g++ -std=c++17 \
     -isystem /public/home/software/opt/bio/software/GCC/12.2.0/include/c++/12.2.0 \
     -ILightAlign/include \
