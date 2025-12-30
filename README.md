@@ -6,7 +6,7 @@ LightAlign is a memory-efficient alignment tool for HiFi data that innovatively 
 To use LightAlign, download all the source code to your computer, place it in the same project, compile it, and generate the executable (.exe) file to start using the tool; or you can also download LightAlign.exe to your computer.
 ### Linux system:
 GCC/12.2.0  
-```g++ -std=c++17 \  
+```g++ -std=c++17 \   
     -isystem /public/home/software/opt/bio/software/GCC/12.2.0/include/c++/12.2.0 \  
     -ILightAlign/include \  
     LightAlign/src/help.cpp \  
