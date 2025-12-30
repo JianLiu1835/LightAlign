@@ -1,6 +1,7 @@
 # LightAlign
 LightAlign is a memory-efficient alignment tool for HiFi data that innovatively utilizes sequence fuzzy feature and reduces the peak memory usage during overlaps detection.
-##Installation
+
+## Installation
 windows:
 To use LightAlign, download all the source code to your computer, place it in the same project, compile it, and generate the executable (.exe) file to start using the tool; or you can also download LightAlign.exe to your computer.
 Linux:
@@ -18,7 +19,7 @@ g++ -std=c++17 \
     -o LightAlign_executable \
     -pthread \
     -lstdc++fs
-##Tutorial
+## Tutorial
 LightAlign Basic Usage:
 LightAlign.exe -O [Output path for results and intermediate files] -i [Input file path, FASTA/FASTQ]
 
@@ -32,10 +33,10 @@ LightAlign Detailed Usage:
 -e FLOAT Maximum error rate [0.02]
 -g INT Number of reads per group in the group alignment phase. Reducing this value decreases memory usage (current memory usage is consistently <1GB for prokaryotic datasets). Keep default unless specifically requiring ultra-low memory [10200]
 -d INT DBA. Can be adjusted to around 80 when average HiFi read length <10k [87]
-##Notes:
+## Notes:
 The executable may be flagged as virus - simply trust/allow the file.
 LightAlign executes in 5 steps. Upon completion, "All steps done." will be displayed. The final output is the PAF file in the output path.
 
-##Limitations
+## Limitations
 
-##Contact
+## Contact
