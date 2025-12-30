@@ -25,16 +25,15 @@ LightAlign Basic Usage:
 LightAlign.exe -O [Output path for results and intermediate files] -i [Input file path, FASTA/FASTQ]
 
 LightAlign Detailed Usage:
--h Show help documentation
-
--p Required when processing FASTA files containing internal line breaks within sequences
--O Output file path
--i Input file path
--w INT Window size [30]
--l INT Alignment unit length/minimum overlap length. Recommended 800-900 for prokaryotes, 1000-1100 for eukaryotes [810]
--e FLOAT Maximum error rate [0.02]
--g INT Number of reads per group in the group alignment phase. Reducing this value decreases memory usage (current memory usage is consistently <1GB for prokaryotic datasets). Keep default unless specifically requiring ultra-low memory [10200]
--d INT DBA. Can be adjusted to around 80 when average HiFi read length <10k [87]
+-h Show help documentation  
+-p Required when processing FASTA files containing internal line breaks within sequences  
+-O Output file path  
+-i Input file path  
+-w INT Window size [30]  
+-l INT Alignment unit length/minimum overlap length. Recommended 800-900 for prokaryotes, 1000-1100 for eukaryotes [810]  
+-e FLOAT Maximum error rate [0.02]  
+-g INT Number of reads per group in the group alignment phase. Reducing this value decreases memory usage (current memory usage is consistently <1GB for prokaryotic datasets). Keep default unless specifically requiring ultra-low memory [10200]  
+-d INT DBA. Can be adjusted to around 80 when average HiFi read length <10k [87]  
 ## Notes:
 The executable may be flagged as virus - simply trust/allow the file.
 LightAlign executes in 5 steps. Upon completion, "All steps done." will be displayed. The final output is the PAF file in the output path.
