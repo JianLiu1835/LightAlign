@@ -19,7 +19,8 @@
 #include"globals.h"
 #include <omp.h>
 #include<cstdlib>
-//#include <intrin.h>
+#include <cctype>
+
 
 mutex fileMutex;  // Global mutex lock
 using namespace std;
@@ -28,6 +29,14 @@ const int WORD_SIZE = 64; //Adjust according to machine word length (typically 6
 int8_t match = 1; // 1 byte
 int8_t mismatch_penalty = -2;
 int8_t gap = -1;
+
+
+string trim(const string& str) {
+    auto start = str.find_first_not_of(" \t\r\n");
+    auto end = str.find_last_not_of(" \t\r\n");
+    if (start == string::npos) return "";
+    return str.substr(start, end - start + 1);
+}
 
 string reverse_cigar(const string& cigar) 
 {
@@ -66,7 +75,6 @@ tuple<string, string, int> needlemanWunsch(const string& seqA, const string& seq
 	int threshold = (1 - error_rate) * match * actualOverlap + error_rate * mismatch * actualOverlap;
 	double error_rate_s = error_rate;
 	const int segment_size = 1100;
-
 	if (actualOverlap > segment_size)
 	{
 		error_rate_s = error_rate * 2;
@@ -77,14 +85,13 @@ tuple<string, string, int> needlemanWunsch(const string& seqA, const string& seq
 
 		alignA_total.reserve(actualOverlap * 1.3);
 		alignB_total.reserve(actualOverlap * 1.3);
-
+		
 		while (processed < actualOverlap)
 		{
 			int seg_len = min(segment_size, actualOverlap - processed);
 
 			string segA = seqA.substr(processed, seg_len);
 			string segB = seqB.substr(processed, seg_len);
-
 			auto [alignA_seg, alignB_seg, score_seg] = needlemanWunsch(segA, segB, match, mismatch, gap);
 
 			processed += seg_len;
@@ -586,7 +593,7 @@ void overlap_between(
 			{
 				for(vector<string> location : it->second)
 				{ 
-					serial_number_of_firstRead = stoi(location[0]); // location format£ºto_string(x), to_string(aligningUnit_order_firstRead * DBA)
+					serial_number_of_firstRead = stoi(location[0]); // location formatÂ£Âºto_string(x), to_string(aligningUnit_order_firstRead * DBA)
 					firstRead_ID = block11_location_of_evenAligningUnit[serial_number_of_firstRead];
 					location1 = stoi(location[1]); // evenAligningUnit's starting position on read
 					
@@ -801,11 +808,9 @@ void alignment(string filtedFile,
 	string Plus_or_minus;
 
 	ifstream inputFile1; // filtedFASTA.txt
-	inputFile1.open(outputfile_step1);
-
+	inputFile1.open(outputfile_step1, ios::binary);
 	ifstream inputFile; // filted.txt
-	inputFile.open(filtedFile);
-
+	inputFile.open(filtedFile, ios::binary);
 	string line;
 	string token;
 	vector<string> tokens;
@@ -817,7 +822,7 @@ void alignment(string filtedFile,
 		{  // splited by TAB
 			tokens.push_back(token);
 		}
-		
+
 		location1 = stoi(tokens[1]);
 		location2 = stoi(tokens[3]);
 		read1_id = tokens[0];
@@ -833,7 +838,8 @@ void alignment(string filtedFile,
 
 		tokens.clear();
 
-		auto it = reads_hashtable.find(read1_id);
+		string trimmed_read1_id = trim(read1_id);
+		auto it = reads_hashtable.find(trimmed_read1_id);
 		inputFile1.clear();
 		inputFile1.seekg(it->second);
 		getline(inputFile1, read1);
@@ -842,7 +848,7 @@ void alignment(string filtedFile,
 		inputFile1.clear();
 		inputFile1.seekg(it->second);
 		getline(inputFile1, read2);
-
+		
 		read1_len = read1.length();
 		read2_len = read2.length();
 
@@ -854,13 +860,14 @@ void alignment(string filtedFile,
 			{
 				overlap_read1 = read1.substr(0, actualOverlap);
 				overlap_read2 = read2.substr(read2_len - actualOverlap, actualOverlap);
+				
 				auto [alignmentA, alignmentB, score] = needlemanWunsch(overlap_read1, overlap_read2, match, mismatch_penalty, gap);
+				
 				outfile_score << score << "\t" << actualOverlap << endl;
-
+				
 				if (score >= actualOverlap * match * (1 - error_rate) + actualOverlap * mismatch_penalty * error_rate)
 				{
 					auto [NM, m_total, total, CIGAR] = difference(alignmentA, alignmentB);
-
 					if (contains(read1_id, "--complementary"))
 					{
 						Plus_or_minus = "-";
@@ -912,13 +919,15 @@ void alignment(string filtedFile,
 			{
 				overlap_read1 = read1;
 				overlap_read2 = read2.substr(read2_len - actualOverlap, read1_len);
+				
 				auto [alignmentA, alignmentB, score] = needlemanWunsch(overlap_read1, overlap_read2, match, mismatch_penalty, gap);
+				
 				outfile_score << score << "\t" << actualOverlap << endl;
-
+				
 				if (score >= actualOverlap * match * (1 - error_rate) + actualOverlap * mismatch_penalty * error_rate)
 				{
 					auto [NM, m_total, total, CIGAR] = difference(alignmentA, alignmentB);
-
+					
 					if (contains(read1_id, "--complementary"))
 					{
 						Plus_or_minus = "-";
@@ -970,13 +979,15 @@ void alignment(string filtedFile,
 			{
 				overlap_read1 = read1.substr(actualOverlap - read2_len, read2_len);
 				overlap_read2 = read2;
+				
 				auto [alignmentA, alignmentB, score] = needlemanWunsch(overlap_read1, overlap_read2, match, mismatch_penalty, gap);
+				
 				outfile_score << score << "\t" << read2_len << endl;
-
+				
 				if (score >= read2_len * match * (1 - error_rate) + read2_len * mismatch_penalty * error_rate)
 				{
 					auto [NM, m_total, total, CIGAR] = difference(alignmentA, alignmentB);
-
+					
 					if (contains(read1_id, "--complementary"))
 					{
 						Plus_or_minus = "-";
@@ -1030,12 +1041,13 @@ void alignment(string filtedFile,
 				overlap_read1 = read1.substr(read1_len - actualOverlap, actualOverlap);
 				overlap_read2 = read2.substr(0, actualOverlap);
 				auto [alignmentA, alignmentB, score] = needlemanWunsch(overlap_read1, overlap_read2, match, mismatch_penalty, gap);
+				
 				outfile_score << score << "\t" << actualOverlap << endl;
-
+				
 				if (score >= actualOverlap * match * (1 - error_rate) + actualOverlap * mismatch_penalty * error_rate)
 				{
 					auto [NM, m_total, total, CIGAR] = difference(alignmentA, alignmentB);
-
+					
 					if (contains(read1_id, "--complementary"))
 					{
 						Plus_or_minus = "-";
@@ -1095,7 +1107,7 @@ void alignment(string filtedFile,
 				overlap_read2 = read2.substr(0, actualOverlap);
 				auto [alignmentA, alignmentB, score] = needlemanWunsch(overlap_read1, overlap_read2, match, mismatch_penalty, gap);
 				outfile_score << score << "\t" << actualOverlap << endl;
-
+				
 				if (score >= actualOverlap * match * (1 - error_rate) + actualOverlap * mismatch_penalty * error_rate)
 				{
 					auto [NM, m_total, total, CIGAR] = difference(alignmentA, alignmentB);
@@ -1154,7 +1166,7 @@ void alignment(string filtedFile,
 				overlap_read2 = read2.substr(actualOverlap - read1_len, read1_len);
 				auto [alignmentA, alignmentB, score] = needlemanWunsch(overlap_read1, overlap_read2, match, mismatch_penalty, gap);
 				outfile_score << score << "\t" << actualOverlap << endl;
-
+				
 				if (score >= actualOverlap * match * (1 - error_rate) + actualOverlap * mismatch_penalty * error_rate)
 				{
 					auto [NM, m_total, total, CIGAR] = difference(alignmentA, alignmentB);
@@ -1213,7 +1225,7 @@ void alignment(string filtedFile,
 				overlap_read2 = read2;
 				auto [alignmentA, alignmentB, score] = needlemanWunsch(overlap_read1, overlap_read2, match, mismatch_penalty, gap);
 				outfile_score << score << "\t" << read2_len << endl;
-
+				
 				if (score >= read2_len * match * (1 - error_rate) + read2_len * mismatch_penalty * error_rate)
 				{
 					auto [NM, m_total, total, CIGAR] = difference(alignmentA, alignmentB);
@@ -1273,7 +1285,7 @@ void alignment(string filtedFile,
 				overlap_read2 = read2.substr(location2, read2_len - location2);
 				auto [alignmentA, alignmentB, score] = needlemanWunsch(overlap_read1, overlap_read2, match, mismatch_penalty, gap);
 				outfile_score << score << "\t" << actualOverlap << endl;
-
+				
 				if (score >= actualOverlap * match * (1 - error_rate) + actualOverlap * mismatch_penalty * error_rate)
 				{
 					auto [NM, m_total, total, CIGAR] = difference(alignmentA, alignmentB);
@@ -1496,3 +1508,4 @@ void read_in_data_for_all_AligningUnitAndItsLocation_secondGroup(ifstream& input
 	}
 	inputFile.close();
 }
+
