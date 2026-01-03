@@ -19,6 +19,7 @@
 #include <omp.h>
 #include <immintrin.h>
 #include<set>
+#include <cctype>
 
 using namespace std;
 
@@ -146,9 +147,15 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 	
+	std::cout << "DBA: " << DBA << std::endl;
+	std::cout << "step: " << step << std::endl;
+	std::cout << "lengthOfAlignmentUnit: " << lengthOfAlignmentUnit << std::endl;
+	std::cout << "window: " << window << std::endl;
+	std::cout << "error_rate: " << error_rate << std::endl;
+
 	// step1
 	string outputfile_step1 = dir_name + "/" + "filteredFASTA.fasta";
-	cout << "==========Step1:Input Standardization==========" << endl;
+	cout << "============Step1:Input Standardization===========" << endl;
 	MAIN_step1(dir_name, inputfile_step1, outputfile_step1);
 	
 	// step2
@@ -161,25 +168,17 @@ int main(int argc, char* argv[])
 	string grouped_reads_folder_name = "grouped_reads";
 	string grouped_aligningUnit1_folder_name = "grouped_aligningUnit1";
 	string grouped_aligningUnit2_folder_name = "grouped_aligningUnit2";
-	cout << "==========Step3:Fuzzy Feature Extraction==========" << endl;
+
+	cout << "============Step3:Fuzzy Feature Extraction============" << endl;
 	MAIN_step3(dir_name, groupSize_step3_step4, lastGroupSize_step3_step4, groups_step3_step4, grouped_reads_folder_name, grouped_aligningUnit1_folder_name, grouped_aligningUnit2_folder_name);
 	
-	
-	cout << "==========Step4:Correlated Read Pair Screening==========" << endl;
+	cout << "============Step4:Correlated Read Pair Screening============" << endl;
 	mutex fileMutex;
 	vector<int> which_group_had_alignment_inside; //firstGroup and secondGroup that have overlap_inside
 
 	
 	int windowNumberOfAlignmentUnit = (lengthOfAlignmentUnit - window) / step + 1;
 	int temp;
-	
-	std::cout << "DBA: " << DBA << std::endl;
-	std::cout << "step: " << step << std::endl;
-	std::cout << "lengthOfAlignmentUnit: " << lengthOfAlignmentUnit << std::endl;
-	std::cout << "window: " << window << std::endl;
-	std::cout << "error_rate: " << error_rate << std::endl;
-
-
 
 	unsigned int recommanded_threads = std::thread::hardware_concurrency();
 	if (recommanded_threads == 0) 
@@ -307,13 +306,11 @@ int main(int argc, char* argv[])
 			ref(which_group_had_alignment_inside),
 			groupSize_step3_step4, firstGroup,
 			groupSize_step3_step4, groups_step3_step4, lastGroupSize_step3_step4);
-		cout << "firstRead readin data done" << endl;
 		
 		inputFile2.close();
 		inputFile3.close();
 		calculate_partitions(groupSize_step3_step4,  thread_s, ref(start_inside1), ref(end_inside1));
 		calculate_partitions(groupSize_step3_step4, thread_s, ref(start_inside2), ref(end_inside2));
-
 
 
 		// read blockxy_AligningUnit1AndItsLocation into blockxy_evenAligningUnit, blockxy_location_of_evenAligningUnit
@@ -323,10 +320,9 @@ int main(int argc, char* argv[])
 			ref(block11_location_of_evenAligningUnit),
 			groupSize_step3_step4);
 		
-		cout << "aligningUnit1/2 readin data done" << endl;
 
 
-		//！！！！！！！！！！！！！！！！！！！！！！！！！！！Generating hash table！！！！！！！！！！！！！！！！！！！！！！！！！！！
+		//================================Generating hash table===================================
 		unordered_map<uint64_t, vector<vector<string> > > hash_table;
 		int hashSize = DBA * 3 * groupSize_step3_step4;
 		int aligningUnit_order_firstRead;
@@ -353,13 +349,11 @@ int main(int argc, char* argv[])
 				aligningUnit_order_firstRead = aligningUnit_order_firstRead + 1;
 			}
 		}
-		cout << "hashtable done" << endl;
 
 		
 		//________________________________________________second loops________________________________________________
 		for (int secondGroup = firstGroup; secondGroup < groups_step3_step4; secondGroup++) // firstGroup + 1
 		{
-			//cout << "Second group is " << secondGroup << " Now." << endl;
 			
 			// Whether it has cycled to the last group
 			if (secondGroup == groups_step3_step4 - 1)
@@ -383,7 +377,6 @@ int main(int argc, char* argv[])
 					ref(block21_AligningUnit2AndItsLocation), ref(block22_AligningUnit2AndItsLocation),
 					lastGroupSize_step3_step4, secondGroup,
 					groupSize_step3_step4, groups_step3_step4, lastGroupSize_step3_step4);
-				cout << "secondRead readin data done" << endl;
 
 				// read in AligningUnit1AndItsLocation and AligningUnit2AndItsLocation
 				thread d[2];
@@ -404,7 +397,6 @@ int main(int argc, char* argv[])
 				{
 					d[i].join();
 				}
-				cout << "aligningUnit1/2 readin data done" << endl;
 			}
 			
 			else
@@ -421,7 +413,6 @@ int main(int argc, char* argv[])
 					ref(block22_AligningUnit2AndItsLocation),
 					groupSize_step3_step4, secondGroup,
 					groupSize_step3_step4, groups_step3_step4, lastGroupSize_step3_step4);
-				cout << "secondRead readin data done" << endl;
 				
 
 				inputFile2.close(); // Close the file after reading
@@ -446,7 +437,6 @@ int main(int argc, char* argv[])
 				{
 					d[i].join();
 				}
-				cout << "aligningUnit1/2 readin data done" << endl;
 			}
 
 
@@ -497,7 +487,6 @@ int main(int argc, char* argv[])
 			{
 				ti.join();
 			}
-			cout << "overlap_between done" << endl;
 
 
 			if (is_lastGroup == true) // Reset the data block size
@@ -519,11 +508,9 @@ int main(int argc, char* argv[])
 			
 
 			end2 = clock(); // time out
-			cout << "time = " << double(end2 - start2) / CLOCKS_PER_SEC << "s" << endl;
 		}
 		
 		// Adding complementary strand groups to the hash table for each group achieves the overlap_inside effect
-		cout << "hashtable for overlap_inside done" << endl;
 
 		hash_table.clear();
 	}
@@ -565,14 +552,14 @@ int main(int argc, char* argv[])
 	dir_path = dir_name + "/" + grouped_aligningUnit2_folder_name;
 	filesystem::remove_all(dir_path);
 	
-	cout << "==========Step5:Segmented Banded Alignment==========" << endl;
+	cout << "============Step5:Segmented Banded Alignment============" << endl;
 
 	unordered_map<string, long long> reads_hashtable;
 	reads_hashtable.reserve(howManyReads * 2); // including complementary chains
 	vector<long long> index;
 	
 	//_____________________________________Read the line offset file______________________________________
-	ifstream inputFile1(dir_name + "/" + "index.txt");
+	ifstream inputFile1(dir_name + "/" + "index.txt", ios::binary);
 	while(getline(inputFile1, line))
 	{
 		index.push_back(stoll(line));
@@ -580,18 +567,16 @@ int main(int argc, char* argv[])
 	inputFile1.close();
 
 	// Here we need to read each sequence name line and its corresponding line offset into a hash table.
-	inputFile1.open(inputfile_step2);
+	inputFile1.open(inputfile_step2, ios::binary);
 	i = 0;
 	while (getline(inputFile1, line))
 	{
-		if (i % 2 == 0)
-			reads_hashtable.emplace(line, index[i + 1]);
+		if (i % 2 == 0){
+			string trimmed_line = trim(line);
+			reads_hashtable.emplace(trimmed_line, index[i + 1]);}
 		i++;
-		//if (i % 50000 == 0)
-			//cout << i << endl;
 	}
 	inputFile1.close();
-	//cout << "done" << endl;
 
 	string outputfile = dir_name + "/overlap.paf";
 	ofstream outfile_overlap(outputfile, ios::app);
@@ -599,6 +584,8 @@ int main(int argc, char* argv[])
 	ofstream outfile_score(outputfile, ios::app);
 
 	vector<thread> t;
+	vector<string> temp_overlap_files;
+	vector<string> temp_score_files;
 	for (int i = 0; i < thread_s; i++)
 	{
 		string filtedFile = dir_name + "/filted_" + to_string(i) + ".txt";
@@ -629,3 +616,4 @@ int main(int argc, char* argv[])
 
 	return 0;
 }
+
