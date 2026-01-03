@@ -119,6 +119,10 @@ void alignment(string filtedFile,
 	string outputfile_step1
 );
 
+
+string trim(const string& str);
+
+
 long long countLinesFast(const std::string& filename);
 
 void read_in_data_for_allReads(ifstream& inputFile,
