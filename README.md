@@ -1,5 +1,5 @@
 # LightAlign
-LightAlign is a memory-efficient alignment tool for HiFi data that innovatively utilizes sequence fuzzy feature and reduces the peak memory usage during overlaps detection. It outputs Pairwise Alignment Format (PAF), when combined with miniasm, LightAlign enables high-quality bacterial genome assembly with memory usage below 1 GB, while also making eukaryotic genome assembly feasible on standard personal computers or even laptops.  
+LightAlign is a memory-efficient alignment tool for HiFi data that utilizes sequence fuzzy feature and reduces the peak memory usage during overlaps detection. It outputs Pairwise Alignment Format (PAF), when combined with miniasm, LightAlign enables high-quality bacterial genome assembly with memory usage below 1 GB, while also making eukaryotic genome assembly feasible on standard personal computers or even laptops.  
 LightAlign is fully compliant with the C++17 language standard.  
 ## Installation
 ### windows system:
@@ -48,33 +48,5 @@ In tests conducted so far, LightAlign consumes the same amount of memory and has
 ## Limitations
 Currently, LightAlign is limited to the assembly of HiFi reads.
 Despite its extremely low RAW usage, LightAlign is slower than current tools like minimap2.
-
 ## Contact
 For any questions or suggestions, please reach out to liujian_HZAU@outlook.com.
-# LightAlign
-
-LightAlign is a memory-efficient pairwise aligner specifically designed for PacBio HiFi reads. By leveraging sequence fuzzy features, it significantly reduces peak memory consumption during overlap detection. LightAlign outputs alignments in the Pairwise Alignment Format (PAF). When used with assemblers like `miniasm`, it enables high-quality bacterial genome assembly with peak memory usage under 1 GB, making eukaryotic genome assembly feasible on standard desktop computers or laptops.
-
-LightAlign is written in standard C++17.
-
-## Installation
-
-### Prerequisites
-*   A C++17 compatible compiler (e.g., GCC >= 7, Clang >= 5, or MSVC >= 2017)
-*   For Linux compilation: `make` and `pthread` library.
-
-### Windows
-1.  **Using Pre-built Binary (Recommended):** Download `LightAlign.exe` from the [Releases](https://github.com/yourusername/LightAlign/releases) page.
-2.  **Compiling from Source:**
-    *   Clone or download the source code.
-    *   Open the project in an IDE like **Visual Studio 2019 or later**.
-    *   Ensure the project is configured to use the **C++17** standard.
-    *   Build the solution to generate `LightAlign.exe`.
-
-### Linux / macOS
-We provide a `Makefile` for easy compilation. Simply run:
-
-```bash
-git clone https://github.com/yourusername/LightAlign.git
-cd LightAlign
-make
