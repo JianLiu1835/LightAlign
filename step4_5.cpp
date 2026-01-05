@@ -43,9 +43,9 @@ int main(int argc, char* argv[])
 	string dir_name;
 	string inputfile_step1;
 	int groupSize_step3_step4 = 10200;
-	
+
 	// Parse command line arguments
-	bool preprocess_flag = false; // By default, multi-line FASTA files do not require preprocessing. Use the -p parameter if preprocessing is needed.
+	//bool preprocess_flag = false; // By default, multi-line FASTA files do not require preprocessing. Use the -p parameter if preprocessing is needed.
 	bool show_help = false;
 	for (int i = 1; i < argc; ++i) {
 		std::string arg = argv[i];
@@ -129,24 +129,29 @@ int main(int argc, char* argv[])
 				return 1;
 			}
 		}
-
+		/*
 		else if (arg == "-p") {
 			preprocess_flag = true;
 		}
+		*/
 	}
 	if (show_help) {
 		printHelp();
 		return 0;
 	}
-	if (preprocess_flag) {
+	/*
+	if (preprocess_flag) 
+	{
 		prepro(inputfile_step1);
 	}
-	if (dir_name.empty() || inputfile_step1.empty()) {
+	*/
+	if (dir_name.empty() || inputfile_step1.empty()) 
+	{
 		std::cerr << "Error: -O and -i parameters are required." << std::endl;
 		std::cerr << "Usage: " << argv[0] << " -O <directory> -i <input_file> [-w <value>] [-l <value>] [-e <value>] [-d]" << std::endl;
 		return 1;
 	}
-	
+
 	std::cout << "DBA: " << DBA << std::endl;
 	std::cout << "step: " << step << std::endl;
 	std::cout << "lengthOfAlignmentUnit: " << lengthOfAlignmentUnit << std::endl;
@@ -154,15 +159,17 @@ int main(int argc, char* argv[])
 	std::cout << "error_rate: " << error_rate << std::endl;
 
 	// step1
+	prepro(inputfile_step1);
+
 	string outputfile_step1 = dir_name + "/" + "filteredFASTA.fasta";
 	cout << "============Step1:Input Standardization===========" << endl;
 	MAIN_step1(dir_name, inputfile_step1, outputfile_step1);
-	
+
 	// step2
 	string inputfile_step2 = outputfile_step1;
 	cout << "==========Step2:Complementary Strand Generation==========" << endl;
 	auto [FASTA_lines, lastGroupSize_step3_step4, groups_step3_step4] = MAIN_step2(dir_name, inputfile_step2, groupSize_step3_step4);
-	
+
 	int howManyReads = (groups_step3_step4 - 1) * groupSize_step3_step4 + lastGroupSize_step3_step4; // Not including complementary chains, the actual number of reads should be twice of it
 	// step3
 	string grouped_reads_folder_name = "grouped_reads";
@@ -171,40 +178,39 @@ int main(int argc, char* argv[])
 
 	cout << "============Step3:Fuzzy Feature Extraction============" << endl;
 	MAIN_step3(dir_name, groupSize_step3_step4, lastGroupSize_step3_step4, groups_step3_step4, grouped_reads_folder_name, grouped_aligningUnit1_folder_name, grouped_aligningUnit2_folder_name);
-	
+
 	cout << "============Step4:Correlated Read Pair Screening============" << endl;
 	mutex fileMutex;
 	vector<int> which_group_had_alignment_inside; //firstGroup and secondGroup that have overlap_inside
 
-	
 	int windowNumberOfAlignmentUnit = (lengthOfAlignmentUnit - window) / step + 1;
 	int temp;
 
 	unsigned int recommanded_threads = std::thread::hardware_concurrency();
-	if (recommanded_threads == 0) 
+	if (recommanded_threads == 0)
 	{
 		std::cout << "Unable to retrieve hardware parallelism information" << std::endl;
 	}
-	else 
+	else
 	{
 		std::cout << "Number of available threads: " << recommanded_threads << std::endl;
 	}
 	int thread_s = int(recommanded_threads); // Convert a variable type to a run-time constant (not yet a compile-time constant)
-	
-	for (int i = 0; i < thread_s; i++) // thread_s
+
+	for (int i = 0; i < thread_s; i++)
 	{
 		string filtedFile = dir_name + "/filted_" + to_string(i) + ".txt";
 		createFile(filtedFile);
 	}
-	
+
 
 	string line;
 	//_____________________________________________Open file_______________________________________________
-	
+
 	ifstream inputFile4;
 	std::cout << "groups: " << groups_step3_step4 << endl;
 	std::cout << "lastGroupSize: " << lastGroupSize_step3_step4 << endl;
-	
+
 
 	vector <string>block11_AligningUnit1AndItsLocation(2 * groupSize_step3_step4); // One read contains two lines
 	vector <string>block12_AligningUnit1AndItsLocation(2 * groupSize_step3_step4);
@@ -226,17 +232,17 @@ int main(int argc, char* argv[])
 
 	// Split the string into evenAligningUnit
 	vector<vector<uint64_t>> key11_evenAligningUnit(groupSize_step3_step4);
-	vector<string> block11_location_of_evenAligningUnit(groupSize_step3_step4); 
+	vector<string> block11_location_of_evenAligningUnit(groupSize_step3_step4);
 	vector<vector<uint64_t>> key12_evenAligningUnit(groupSize_step3_step4);
 	vector<string> block12_location_of_evenAligningUnit(groupSize_step3_step4);// first dimension
 	vector<vector<uint64_t>> key21_evenAligningUnit(groupSize_step3_step4);
 	vector<string> block21_location_of_evenAligningUnit(groupSize_step3_step4);// first dimension
 	vector<vector<uint64_t>> key22_evenAligningUnit(groupSize_step3_step4);
 	vector<string> block22_location_of_evenAligningUnit(groupSize_step3_step4);// first dimension
-	
+
 	vector<uint64_t> row_in_a1_former;
 	vector<vector<string>> row2D_in_a1_loc_former;
-	vector<uint64_t> row_in_a1_latter; 
+	vector<uint64_t> row_in_a1_latter;
 	vector<vector<string>> row2D_in_a1_loc_latter;
 	vector<uint64_t> row_in_a2_former(2 * DBA_2);
 	vector<vector<string>> row2D_in_a2_loc_former(DBA_2 * 2, vector<string>(2));
@@ -259,7 +265,6 @@ int main(int argc, char* argv[])
 	vector<vector<vector<string>>> location_of_evenAligningUnit;
 	vector<vector<vector<string>>> location_of_consecutiveAligningUnit;
 
-
 	// The inside1 parameter, not required for every loop
 	vector<int> start_inside1(thread_s);
 	vector<int> end_inside1(thread_s);
@@ -272,15 +277,14 @@ int main(int argc, char* argv[])
 
 	int length_of_side; // Base length Initial value
 	int h; // The sum of the first n h's
-	float area ; // Each small trapezoid area
+	float area; // Each small trapezoid area
 
 	bool is_lastGroup = false; // Whether it has cycled to the last group
 
 	unordered_set<string> used_Reads;
 
-
 	//___________________________________________what lastGroup need_____________________________________________
-	
+
 	vector <string> all_AligningUnit1AndItsLocation;
 	vector <string> all_AligningUnit2AndItsLocation;
 	// Split the string into alignment units
@@ -290,10 +294,10 @@ int main(int argc, char* argv[])
 	string buffer;
 	string l;
 	clock_t start2, end2;
-	
+
 	//________________________________________start clocking______________________________________________
 	start2 = clock();
-	
+
 	//___________________________________________Start the first loop_____________________________________________
 	for (int firstGroup = 0; firstGroup < groups_step3_step4; firstGroup++)
 	{
@@ -306,10 +310,10 @@ int main(int argc, char* argv[])
 			ref(which_group_had_alignment_inside),
 			groupSize_step3_step4, firstGroup,
 			groupSize_step3_step4, groups_step3_step4, lastGroupSize_step3_step4);
-		
+
 		inputFile2.close();
 		inputFile3.close();
-		calculate_partitions(groupSize_step3_step4,  thread_s, ref(start_inside1), ref(end_inside1));
+		calculate_partitions(groupSize_step3_step4, thread_s, ref(start_inside1), ref(end_inside1));
 		calculate_partitions(groupSize_step3_step4, thread_s, ref(start_inside2), ref(end_inside2));
 
 
@@ -319,7 +323,6 @@ int main(int argc, char* argv[])
 			ref(key11_evenAligningUnit),
 			ref(block11_location_of_evenAligningUnit),
 			groupSize_step3_step4);
-		
 
 
 		//================================Generating hash table===================================
@@ -327,7 +330,7 @@ int main(int argc, char* argv[])
 		int hashSize = DBA * 3 * groupSize_step3_step4;
 		int aligningUnit_order_firstRead;
 		hash_table.reserve(hashSize);
-	
+
 		for (int x = 0; x < groupSize_step3_step4; x++) // x represents the index of firstRead in the current block11_allReads
 		{
 			aligningUnit_order_firstRead = 0;
@@ -337,24 +340,23 @@ int main(int argc, char* argv[])
 				if (it != hash_table.end())
 				{
 					hash_table[key].push_back({ to_string(x),
-						to_string(aligningUnit_order_firstRead * DBA )});
+						to_string(aligningUnit_order_firstRead * DBA) });
 					// Each vector<string> contains: {index of firstRead in the current block11_allReads, start position of the alignment unit}
 				}
 				else
 				{
 					// Stores the starting position of the alignment unit on current first read
 					hash_table.emplace(key, vector<vector<string>>{{to_string(x),
-						to_string(aligningUnit_order_firstRead * DBA)}});
+						to_string(aligningUnit_order_firstRead* DBA)}});
 				}
 				aligningUnit_order_firstRead = aligningUnit_order_firstRead + 1;
 			}
 		}
 
-		
+
 		//________________________________________________second loops________________________________________________
 		for (int secondGroup = firstGroup; secondGroup < groups_step3_step4; secondGroup++) // firstGroup + 1
 		{
-			
 			// Whether it has cycled to the last group
 			if (secondGroup == groups_step3_step4 - 1)
 			{
@@ -398,7 +400,7 @@ int main(int argc, char* argv[])
 					d[i].join();
 				}
 			}
-			
+
 			else
 			{
 				// start_inside2 is related to secondGroups
@@ -407,32 +409,32 @@ int main(int argc, char* argv[])
 				// Multiple types of data are simultaneously read and processed as in-memory data types
 				read_in_data_for_all_AligningUnitAndItsLocation_secondGroup(
 					ref(inputFile3),
-					ref(dir_name), 
+					ref(dir_name),
 					ref(grouped_aligningUnit2_folder_name),
-					ref(block21_AligningUnit2AndItsLocation), 
+					ref(block21_AligningUnit2AndItsLocation),
 					ref(block22_AligningUnit2AndItsLocation),
 					groupSize_step3_step4, secondGroup,
 					groupSize_step3_step4, groups_step3_step4, lastGroupSize_step3_step4);
-				
+
 
 				inputFile2.close(); // Close the file after reading
 				inputFile3.close(); // Close the file after reading
-				
+
 				// read in AligningUnit1AndItsLocation and AligningUnit2AndItsLocation
 				thread d[2];
-				d[0] = thread(seperate2, 
+				d[0] = thread(seperate2,
 					ref(row_in_a2_former),
 					ref(block21_AligningUnit2AndItsLocation),
 					ref(key21_consecutiveAligningUnit),
 					ref(block21_location_of_consecutiveAligningUnit),
 					groupSize_step3_step4);
-				d[1] = thread(seperate2, 
+				d[1] = thread(seperate2,
 					ref(row_in_a2_latter),
 					ref(block22_AligningUnit2AndItsLocation),
 					ref(key22_consecutiveAligningUnit),
 					ref(block22_location_of_consecutiveAligningUnit),
 					groupSize_step3_step4);
-				
+
 				for (int i = 0; i < 2; i++)
 				{
 					d[i].join();
@@ -474,7 +476,7 @@ int main(int argc, char* argv[])
 					ref(hash_table),
 					howManyReads,
 					firstGroup, secondGroup, groups_step3_step4,
-					start_between[i], 
+					start_between[i],
 					end_between[i],
 					windowNumberOfAlignmentUnit,
 					groupSize_step3_step4,
@@ -483,7 +485,7 @@ int main(int argc, char* argv[])
 					is_lastGroup
 				);
 			}
-			for (auto& ti : t) 
+			for (auto& ti : t)
 			{
 				ti.join();
 			}
@@ -505,16 +507,15 @@ int main(int argc, char* argv[])
 				key22_consecutiveAligningUnit.resize(groupSize_step3_step4);
 				block22_location_of_consecutiveAligningUnit.resize(groupSize_step3_step4);
 			}
-			
-
 			end2 = clock(); // time out
+			//cout << "time = " << double(end2 - start2) / CLOCKS_PER_SEC << "s" << endl;
 		}
-		
+
 		// Adding complementary strand groups to the hash table for each group achieves the overlap_inside effect
 
 		hash_table.clear();
 	}
-	
+
 	vector<string>().swap(block11_AligningUnit1AndItsLocation);
 	vector<string>().swap(block12_AligningUnit1AndItsLocation);
 	vector<string>().swap(block21_AligningUnit1AndItsLocation);
@@ -540,7 +541,7 @@ int main(int argc, char* argv[])
 	vector<vector<uint64_t>>().swap(key22_consecutiveAligningUnit);
 	vector<string>().swap(block21_location_of_consecutiveAligningUnit);
 	vector<string>().swap(block22_location_of_consecutiveAligningUnit);
-	
+
 	//_________________________Delete intermediate files_________________________
 	filesystem::path dir_path;
 	dir_path = dir_name + "/" + grouped_reads_folder_name;
@@ -551,16 +552,16 @@ int main(int argc, char* argv[])
 
 	dir_path = dir_name + "/" + grouped_aligningUnit2_folder_name;
 	filesystem::remove_all(dir_path);
-	
+
 	cout << "============Step5:Segmented Banded Alignment============" << endl;
 
 	unordered_map<string, long long> reads_hashtable;
 	reads_hashtable.reserve(howManyReads * 2); // including complementary chains
 	vector<long long> index;
-	
+
 	//_____________________________________Read the line offset file______________________________________
 	ifstream inputFile1(dir_name + "/" + "index.txt", ios::binary);
-	while(getline(inputFile1, line))
+	while (getline(inputFile1, line))
 	{
 		index.push_back(stoll(line));
 	}
@@ -571,9 +572,10 @@ int main(int argc, char* argv[])
 	i = 0;
 	while (getline(inputFile1, line))
 	{
-		if (i % 2 == 0){
+		if (i % 2 == 0) {
 			string trimmed_line = trim(line);
-			reads_hashtable.emplace(trimmed_line, index[i + 1]);}
+			reads_hashtable.emplace(trimmed_line, index[i + 1]);
+		}
 		i++;
 	}
 	inputFile1.close();
@@ -601,7 +603,7 @@ int main(int argc, char* argv[])
 	{
 		ti.join();
 	}
-	
+
 	// remove filted_i.txt
 	for (int i = 0; i < thread_s; i++)
 	{
@@ -613,7 +615,5 @@ int main(int argc, char* argv[])
 	cout << "All steps done." << endl;
 	system("pause");
 
-
 	return 0;
 }
-
