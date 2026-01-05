@@ -33,7 +33,6 @@ LightAlign accepts the following command-line options:
 | Option | Type    | Description | Default |
 |--------|---------|-------------|---------|
 | `-h`   | flag    | Show help documentation and exit. | |
-| `-p`   | flag    | Enable when processing FASTA files that contain internal line breaks within sequences (i.e., multi-line sequences). | |
 | `-i`   | string  | Path to the input file (required). | |
 | `-O`   | string  | Path for the output file (required). | |
 | `-w`   | INT     | Window size for alignment. | 30 |
