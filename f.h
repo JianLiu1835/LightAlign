@@ -21,7 +21,10 @@
 
 using namespace std;
 
-void prepro(string input_file);
+bool has_multiline_sequences(const std::string& input_file, int max_sequences_to_check=3);
+void format_fasta_to_single_line(const std::string& input_file);
+void prepro(const std::string& input_file, int check_sequences=3);
+
 void printHelp();
 
 //____________________________________________fastq_into_fastq____________________________________________
@@ -154,3 +157,4 @@ void read_in_data_for_all_AligningUnitAndItsLocation_secondGroup(ifstream& input
 	vector<string>& block22_AligningUnitAndItsLocation,
 	int groupSize, int secondGroup,
 	int groupSize_step3_step4, int groups_step3_step4, int lastGroupSize_step3_step4);
+
