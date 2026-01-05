@@ -5,76 +5,102 @@
 #include <cctype>
 #include <cstdio>
 
-using namespace std;
-
-void prepro(string input_file)
-{
-    const string output_file = input_file + ".tmp";
-
-    std::ifstream input(input_file);
+// Check if sequences in a FASTA file are in multiline format (only checking the first few lines)
+bool has_multiline_sequences(const std::string& input_file, int max_sequences_to_check) {
+    std::ifstream input(input_file, ios::binary);
     if (!input) {
-        std::cout << "Error: Could not open input file: " << input_file << "\n";
+        std::cerr << "Error: Could not open file: " << input_file << std::endl;
+        return false;
     }
 
-    std::ofstream output(output_file);
+    std::string line;
+    bool in_sequence = false;
+    int sequence_count = 0;
+    int lines_in_current_sequence = 0;
+
+    while (std::getline(input, line) && sequence_count < max_sequences_to_check) {
+        // skip the empty line
+        if (line.empty()) continue;
+
+        if (line[0] == '>') {
+            if (in_sequence && lines_in_current_sequence > 1) {
+                input.close();
+                return true;
+            }
+
+            sequence_count++;
+            in_sequence = true;
+            lines_in_current_sequence = 0;
+        }
+        else if (in_sequence) {
+            lines_in_current_sequence++;
+            if (lines_in_current_sequence > 1) {
+                input.close();
+                return true;
+            }
+        }
+    }
+
+    input.close();
+    return false;
+}
+
+// Format FASTA file (merge multiline sequences into single lines)
+void format_fasta_to_single_line(const std::string& input_file) {
+    std::string temp_file = input_file + ".tmp";
+
+    std::ifstream input(input_file, ios::binary);
+    if (!input) {
+        std::cerr << "Error: Cannot open input file: " << input_file << std::endl;
+        return;
+    }
+
+    std::ofstream output(temp_file);
     if (!output) {
-        std::cout << "Error: Could not create output file: " << output_file << "\n";
+        std::cerr << "Error: Cannot create temporary file" << std::endl;
+        input.close();
+        return;
     }
 
     std::string line, sequence;
     bool in_sequence = false;
-    size_t sequence_count = 0;
 
     while (std::getline(input, line)) {
-        if (!line.empty() && line[0] == '>') 
-        {
+        if (!line.empty() && line[0] == '>') {
             if (in_sequence) {
                 output << sequence << '\n';
                 sequence.clear();
-                sequence_count++;
             }
             output << line << '\n';
             in_sequence = true;
         }
         else if (in_sequence) {
             for (char c : line) {
-                if (!std::isspace(static_cast<unsigned char>(c))) 
-                {
+                if (!std::isspace(static_cast<unsigned char>(c))) {
                     sequence += c;
                 }
             }
         }
     }
 
-    if (in_sequence && !sequence.empty()) 
-    {
+    if (in_sequence && !sequence.empty()) {
         output << sequence << '\n';
-        sequence_count++;
     }
 
     input.close();
     output.close();
 
-    if (!output) 
-    {
-        std::cout << "Error: Failed to write output file\n";
-        std::remove(output_file.c_str());
+    // replace original file with the tmp file
+    std::remove(input_file.c_str());
+    std::rename(temp_file.c_str(), input_file.c_str());
+}
+
+void prepro(const std::string& input_file, int check_sequences) {
+    if (has_multiline_sequences(input_file, check_sequences)) {
+        std::cout << "Format FASTA file: " << input_file << std::endl;
+        format_fasta_to_single_line(input_file);
     }
-
-    if (std::remove(input_file.c_str()) != 0) 
-    {
-        std::cerr << "Error: Failed to delete original file (" << input_file
-            << "). Output saved to " << output_file << "\n";
+    else {
+        std::cout << "The FASTA file is already in single-line format: " << input_file << std::endl;
     }
-
-    // rename
-    if (std::rename(output_file.c_str(), input_file.c_str())) 
-    {
-        std::cout << "Error: Failed to rename output file. Result saved in "
-            << output_file << "\n";
-    }
-
-    std::cout << "Success! Processed " << sequence_count << " sequences\n"
-        << "Original file replaced with reformatted version: " << input_file << "\n";
-
 }
