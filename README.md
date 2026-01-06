@@ -3,16 +3,15 @@ LightAlign is a memory-efficient alignment tool for HiFi data that utilizes sequ
 LightAlign is fully compliant with the C++17 language standard.  
 
 ## System Requirements
-The following requirements reflect the environments where this software has been successfully tested. Other configurations with similar specifications may also work but are not officially verified:  
+The following requirements reflect the environments where this software has been successfully tested. Other configurations with similar specifications should also work but are not guaranteed:  
 #### Operating System
 * **64-bit** systems only
 * **Windows**: Windows 10 / Windows 11
 * **Linux**: 
     * **Supported Distributions**:
-        * **CentOS/RHEL 7.0+** (Tested on CentOS 7 with kernel 3.10.0-862.el7.x86_64)
-        * **Ubuntu 18.04 LTS+** or **Ubuntu 20.04 LTS+** (Recommended)
-        * Other distributions with **kernel 3.10.0+** and **glibc 2.17+** may work but are not officially tested
-    * **Kernel**: Linux kernel 3.10.0+ (For CentOS/RHEL 7 series) or 4.15+ (For Ubuntu 18.04+)
+        * **CentOS/RHEL 7.0+** (Tested on CentOS 7 with kernel 3.10.0-862.el7.x86_64)  
+        * Other distributions with **kernel 3.10.0+** and **glibc 2.17+** may work but are not officially tested  
+    * **Kernel**: Linux kernel 3.10.0+ (For CentOS/RHEL 7 series) or 4.15+ (For Ubuntu 18.04+)  
 
 #### Compiler (with full C++17 support)
 * **Linux**: 
