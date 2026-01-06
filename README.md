@@ -82,7 +82,7 @@ LightAlign executes in 5 steps. Upon completion, "All steps done." will be displ
 In tests conducted so far, LightAlign consumes the same amount of memory and has roughly the same runtime on both Linux and Windows.  
 
 ## Limitations
-Currently, LightAlign is limited to the assembly of HiFi reads.
+Currently, LightAlign is limited to the assembly of HiFi reads.  
 Despite its extremely low RAW usage, LightAlign is slower than current tools like minimap2.
 ## Contact
 For any questions or suggestions, please reach out to liujian_HZAU@outlook.com.
