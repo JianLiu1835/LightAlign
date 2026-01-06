@@ -3,16 +3,37 @@ LightAlign is a memory-efficient alignment tool for HiFi data that utilizes sequ
 LightAlign is fully compliant with the C++17 language standard.  
 
 ## System Requirements
-To build and run this software, your environment should meet the following requirements.  
-### Essential Requirements
-* **Operating System**: 64-bit
-    * Windows 10 / 11
-    * Linux (Kernel 4.17+， distributions like Ubuntu 18.04+, CentOS 8+, or similar)
-* **Compiler** (with full C++17 support):
-    * **Linux**: GCC 12.2.0+
-    * **Windows**: MSVC (such as Visual Studio 2019 or Visual Studio 2022)
-* **Hardware**:
-    * **CPU**: A modern x86-64 processor (Recommended: AMD Ryzen 5 / Intel Core i5 equivalent or higher for development).
+The following requirements reflect the environments where this software has been successfully tested. Other configurations with similar specifications may also work but are not officially verified:  
+#### Operating System
+* **64-bit** systems only
+* **Windows**: Windows 10 version / Windows 11
+* **Linux**: 
+    * **Supported Distributions**:
+        * **CentOS/RHEL 7.0+** (Tested on CentOS 7 with kernel 3.10.0-862.el7.x86_64)
+        * **Ubuntu 18.04 LTS+** or **Ubuntu 20.04 LTS+** (Recommended)
+        * Other distributions with **kernel 3.10.0+** and **glibc 2.17+** may work but are not officially tested
+    * **Kernel**: Linux kernel 3.10.0+ (For CentOS/RHEL 7 series) or 4.15+ (For Ubuntu 18.04+)
+
+#### Compiler (with full C++17 support)
+* **Linux**: 
+    * **GCC 7.5+** (Minimum required for full C++17 support)
+    * **GCC 12.2.0+** (Recommended for better performance and newer features)
+    * *Note: CentOS 7 default GCC is 4.8.5, which does NOT support C++17. You must install a newer version via devtoolset or compile from source.*
+* **Windows**: 
+    * **MSVC 19.30+** (Visual Studio 2022, Recommended)
+
+#### Hardware
+* **CPU**: 
+    * **Minimum**: x86-64 processor with SSE4.2 support
+    * **Recommended**: Modern x86-64 processor (AMD Ryzen 5 / Intel Core i5 equivalent or higher)
+    * **Tested configurations**:
+        * Development: AMD Ryzen 5 3600 6-Core Processor
+        * Server/Production: AMD EPYC 7713 64-Core Processor
+* **RAM**:
+    * **Minimum**: 4 GB
+    * **Recommended**: 8 GB or more for optimal performance
+    * **Large-scale processing**: 16 GB+ recommended
+* **Storage**: 500 MB free space for software and dependencies
 
 ### Tested Environments
 This project has been actively developed and tested on the following configurations:
