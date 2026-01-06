@@ -16,7 +16,6 @@ The following requirements reflect the environments where this software has been
 
 #### Compiler (with full C++17 support)
 * **Linux**: 
-    * **GCC 7.5+** (Minimum required for full C++17 support)
     * **GCC 12.2.0+** (Recommended for better performance and newer features)
     * *Note: CentOS 7 default GCC is 4.8.5, which does NOT support C++17. You must install a newer version via devtoolset or compile from source.*
 * **Windows**: 
@@ -28,12 +27,7 @@ The following requirements reflect the environments where this software has been
     * **Recommended**: Modern x86-64 processor (AMD Ryzen 5 / Intel Core i5 equivalent or higher)
     * **Tested configurations**:
         * Development: AMD Ryzen 5 3600 6-Core Processor
-        * Server/Production: AMD EPYC 7713 64-Core Processor
-* **RAM**:
-    * **Minimum**: 4 GB
-    * **Recommended**: 8 GB or more for optimal performance
-    * **Large-scale processing**: 16 GB+ recommended
-* **Storage**: 500 MB free space for software and dependencies
+        * Server/Production: AMD EPYC 7713 64-Core Processor  
 
 ### Tested Environments
 This project has been actively developed and tested on the following configurations:
@@ -42,7 +36,7 @@ This project has been actively developed and tested on the following configurati
     * **OS**: Windows 10
 * **High-Performance/Server Environment**:
     * **CPU**: AMD EPYC 7713 64-Core Processor
-    * **OS**: Linux
+    * **OS**: Linux 7 CentOS  
 
 ## Installation
 ### windows system:
