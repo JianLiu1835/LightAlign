@@ -9,16 +9,15 @@ The following requirements reflect the environments where this software has been
 * **Windows**: Windows 10 / Windows 11
 * **Linux**: 
     * **Supported Distributions**:
-        * **CentOS/RHEL 7.0+** (Tested on CentOS 7 with kernel 3.10.0-862.el7.x86_64)  
-        * Other distributions with **kernel 3.10.0+** and **glibc 2.17+** may work but are not officially tested  
-    * **Kernel**: Linux kernel 3.10.0+ (For CentOS/RHEL 7 series) or 4.15+ (For Ubuntu 18.04+)  
+        * **CentOS/RHEL 7.0+** (Tested on CentOS 7 with kernel 3.10.0-862.el7.x86_64)   
+    * **Kernel**: Linux kernel 3.10.0+ (For CentOS/RHEL 7 series)   
 
 #### Compiler (with full C++17 support)
 * **Linux**: 
-    * **GCC 12.2.0+** (Recommended for better performance and newer features)
+    * **GCC 12.2.0+** (Recommended for better performance and newer features)  
     * *Note: CentOS 7 default GCC is 4.8.5, which does NOT support C++17. You must install a newer version via devtoolset or compile from source.*
 * **Windows**: 
-    * **MSVC 19.30+** (Visual Studio 2022, Recommended)
+    * **MSVC 19.30+** (Visual Studio 2022)  
 
 #### Hardware
 * **CPU**: 
