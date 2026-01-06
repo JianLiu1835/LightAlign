@@ -6,7 +6,7 @@ LightAlign is fully compliant with the C++17 language standard.
 The following requirements reflect the environments where this software has been successfully tested. Other configurations with similar specifications may also work but are not officially verified:  
 #### Operating System
 * **64-bit** systems only
-* **Windows**: Windows 10 version / Windows 11
+* **Windows**: Windows 10 / Windows 11
 * **Linux**: 
     * **Supported Distributions**:
         * **CentOS/RHEL 7.0+** (Tested on CentOS 7 with kernel 3.10.0-862.el7.x86_64)
